@@ -1,6 +1,10 @@
 import sys
 import random
 
+import numpy
+
+from PIL import Image, ImageDraw
+
 try:
 	POPULATION_PER_GENERATION = int(raw_input("Enter population size (preferably between 50 and 75): "))
 except ValueError:
@@ -34,7 +38,7 @@ class Gene:
 		magnitude = random.random()
 		if mutation_type == "coordinates":
 			new_X = int(self.coordinates[0] * random.choice([(1+magnitude), (1-magnitude)]))
-			new_Y = int(self.coordinates[1]*  random.choice([(1+magnitude), (1-magnitude)]))
+			new_Y = int(self.coordinates[1] *  random.choice([(1+magnitude), (1-magnitude)]))
 
 			self.coordinates = [new_X, new_Y]
 
@@ -49,10 +53,50 @@ class Gene:
 			self.colour = Colour(new_red_val, new_green_val, new_blue_val)
 
 
+class Organism:
 
+	def __init__(self, size, n_genes):
+		self.size = size
+		self.genes = [Gene(size) for i in xrange(max(n_genes, 400))] #no more than 400 genes
 
+	def mutate(self):
+		for gene in self.genes:
+			if random.random() < MUTATION_CHANCE:
+				gene.mutate()
 
+	def crossover(self, partner):
 
+		offspring = Gene(self.genes.length)
+		mid = this.genes.length/2
 
+		for i in xrange(0, mid):
+			offspring.genes[i] = self.genes[i]
 
+		for j in xrange(mid, self.genes.length):
+			offspring.genes[j] = self.genes[j]
 
+		return offspring
+
+	def draw(self):
+		image = Image.new("RGB",self.size,(255,255,255))
+		canvas = ImageDraw.Draw(image)
+
+		for gene in self.genes:
+			colour = (gene.colour.red_val,gene.colour.green_val,gene.colour.blue_val)
+			canvas.ellipse([gene.coordinates[0]-(2*gene.radius),
+							gene.coordinates[1]-(2*gene.radius),
+							gene.coordinates[0]+(2*gene.radius),
+							gene.coordinates[1]+(2*gene.radius)],
+							outline=colour,fill=colour)
+
+        return image
+
+	def fitness(self, target):
+		image = draw(self)
+
+		raw_self = numpy.array(image, numpy.int16)
+		raw_target = numpy.array(target, numpy.int16)
+
+		delta = float(numpy.sum(numpy.abs(raw_self - raw_target)))
+
+		return ((delta/255) * 100) / raw_self.size
