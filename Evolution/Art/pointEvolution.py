@@ -21,7 +21,7 @@ class Colour:
 		self.green_val = green_val
 		self.blue_val = blue_val
 
-class DNA:
+class Gene:
 
 	def __init__(self, max_size):
 		self.max_size = max_size
