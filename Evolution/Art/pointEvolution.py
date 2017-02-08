@@ -17,7 +17,7 @@ except ValueError:
 	print "Didn't enter a number. Choosing 1% mutation rate"
 	MUTATION_CHANCE = 0.01
 
-
+TARGET = None
 class Colour:
 
 	def __init__(self, red_val, green_val, blue_val):
@@ -58,6 +58,7 @@ class Organism:
 	def __init__(self, size, n_genes):
 		self.size = size
 		self.genes = [Gene(size) for i in xrange(max(n_genes, 400))] #no more than 400 genes
+		self.fitness = 0
 
 	def mutate(self):
 		for gene in self.genes:
@@ -66,13 +67,13 @@ class Organism:
 
 	def crossover(self, partner):
 
-		offspring = Gene(self.genes.length)
-		mid = this.genes.length/2
+		offspring = Gene(len(self.genes))
+		mid = len(this.genes)/2
 
 		for i in xrange(0, mid):
 			offspring.genes[i] = self.genes[i]
 
-		for j in xrange(mid, self.genes.length):
+		for j in xrange(mid, len(self.genes)):
 			offspring.genes[j] = self.genes[j]
 
 		return offspring
@@ -91,12 +92,50 @@ class Organism:
 
         return image
 
-	def fitness(self, target):
-		image = draw(self)
+	def set_fitness(self, target):
+		image = draw()
 
 		raw_self = numpy.array(image, numpy.int16)
 		raw_target = numpy.array(target, numpy.int16)
 
 		delta = float(numpy.sum(numpy.abs(raw_self - raw_target)))
 
-		return ((delta/255) * 100) / raw_self.size
+		self.fitness = ((delta/255) * 100) / raw_self.size
+
+class Population:
+
+	def __init__(self, target_size):
+		self.population = [Organism(target_size, N_GENES) for i in xrange(POPULATION_PER_GENERATION)]
+		self.mating_pool = []
+
+		#for organism in self.population:
+
+	def set_fitness(self):
+
+		for organism in self.population: #maybe this goes in another method.
+			organism.set_fitness(TARGET)
+
+
+	def natural_selection(self):
+		self.max_fitness = 0
+		self.mating_pool = []
+		for organism in self.population:
+			max_fitness = max(organism.fitness, max_fitness)
+
+		for i in xrange(len(self.population)):
+			n = int(self.population[i].fitness * 10)
+			for j in xrange(n):
+				self.mating_pool.append(self.population[i])
+
+	def generate(self):
+		for i in xrange(len(self.population)):
+			parent_A = random.choice(self.population)
+			parent_B = random.choice(self.population)
+
+			offspring = parent_A.crossover(parent_B)
+			offspring.mutate()
+
+			self.population[i] = offspring
+
+
+
