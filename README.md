@@ -1,5 +1,5 @@
 # Virtual-Life
 
-To get started, clone this repository and run view.py.
+To get started, run Star Formation/view.py.
 
-To run the collisions module, run modelMechanics.py.
+To run the collisions module, run Star Formation/modelMechanics.py.
